@@ -13,8 +13,45 @@
 % ?- div(7,-3,Div).
 % Div = -2.
 
-mul(A, 1, B) :- A == B.
-mul(A, B, C) :-
-    mul(A, Bm1, CmA),
-    B is Bm1 + 1,
-    C is CmA + A.
+
+% divnat(a,b,c) ~ a // b == c 
+% (implement without operator `//`)
+
+% divnat(7,3,2) true
+% divnat(4,3,1) true
+% divnat(1,3,0) true
+
+% divnat(-7,3,-2) true
+% divnat(-4,3,-1) true
+% divnat(-1,3,0) true
+
+% divnat(7,-3,-2) true
+% divnat(4,-3,-1) true
+% divnat(1,-3,0) true
+
+% divnat(-7,-3,-2) true
+% divnat(-4,-3,-1) true
+% divnat(-1,-3,0) true
+
+
+
+% sgn(A) sgn(B) sng(C)
+%   +      +
+%   -      +
+%   +      -
+%   -      -
+
+% a * b + q == c
+% a + q/b == c
+% q / b < 1 => q < b
+% 3 * 6 = 18
+
+divnat(A, B, C) :-
+    C is 0,
+    B > A.
+
+% divnat(a,b,c) ~ a // b == c ~ a = c * b + q
+divnat(A, B, C) :-
+    Q is A - C * B,
+    Q >= 0,
+    Q < abs(B).
