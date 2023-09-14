@@ -3,6 +3,7 @@
 % Grupė: 3gr,
 % Užduoties variantai: 1.13; 2.2; 3.2; 4.3
 
+% 1.13
 % sulieti(S1,S2,R) - duoti išrūšiuoti didėjimo 
 % tvarka sąrašai S1 ir S2. Sąrašas R gaunamas 
 % suliejus šiuos du sąrašus taip, kad jo elementai 
@@ -12,19 +13,16 @@
 
 % R = [1,2,4,5,7,11].
 
-% sulieti([H1], [H2], R) :-
-%     A is min(H1, H2),
-%     B is max(H1, H2),
-%     R = [A, B].
+sulieti([X|Xs], [    ], R) :- R = [X|Xs].
+sulieti([    ], [X|Xs], R) :- R = [X|Xs].
+sulieti([X|Xs], [Y|Ys], R) :- X >= Y, sulieti([X|Xs],   Ys  , R1), R = [Y|R1].
+sulieti([X|Xs], [Y|Ys], R) :- Y >  X, sulieti(   Xs , [Y|Ys], R1), R = [X|R1].
 
-sulieti([X|Xs], [], R) :- R = [X|Xs].
-sulieti([], [X|Xs], R) :- R = [X|Xs].
-sulieti(L, [X|Xs], R) :- H1 >= X, sulieti(L, Xs, R1), R = [X|R1].
-sulieti([X|Xs], L, R) :- H2 >  X, sulieti(Xs, L, R1), R = [X|R1].
-
+% Pvz:
 % sulieti([], [1,2,3], R).
 % sulieti([1],[2],[2,1]).
 
+% 2.2
 % apjungti(SS,R) - sąrašas R gaunamas iš duotojo sąrašų sąrašo SS, 
 % sujungus pastarojo sąrašus į bendrą sąrašą. 
 % Giliuosius sąrašus apdoroti nėra būtina. Pavyzdžiui:
@@ -33,12 +31,18 @@ sulieti([X|Xs], L, R) :- H2 >  X, sulieti(Xs, L, R1), R = [X|R1].
 
 % R = [a,b,c,d,[e,f],g].
 
-list_concat([], [X|Xs], [Y|Ys]) :- Y = X, Ys = Xs.
-list_concat([X|Xs], L, [Y|Ys]) :- X = Y, list_concat(Xs, L, Ys).
+% Sujungia sąrašus
+list_concat([    ], [X|Xs], [Y|Ys]) :- Y = X, Ys = Xs.
+list_concat([X|Xs],   L   , [Y|Ys]) :- X = Y, list_concat(Xs, L, Ys).
 
-apjungti([X], R) :- R = X.
+apjungti([ X  ], R) :- R = X.
 apjungti([X|Xs], R) :- apjungti(Xs, R1), list_concat(X, R1, R).
 
+% Pvz:
+% apjungti([[a,b],[c],[d,[e,f], g]],R).
+% 
+
+% 3.2
 % bendri(S1,S2,R) - sąrašas R susideda iš bendrų 
 % duotųjų sąrašų S1 ir S2 elementų. Pavyzdžiui:
 
@@ -46,6 +50,7 @@ apjungti([X|Xs], R) :- apjungti(Xs, R1), list_concat(X, R1, R).
     
 % R = [b,d].
 
+% Patikrina ar yra saraše
 yra(A, [A|_]).
 yra(A, [X|Xs]) :- A \= X, yra(A, Xs).
 
@@ -59,6 +64,7 @@ bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X|R1], !.
 % bendri([3,2,1],[1,3,16,4],R).
 % bendri(X,X,X).
 
+% 4.3
 % suma(S1,S2,Sum) - S1 ir S2 yra skaičiai vaizduojami skaitmenų sąrašais. 
 % Sum - tų skaičių suma vaizduojama skaitmenų sąrašu. Pavyzdžiui:
 
@@ -66,6 +72,7 @@ bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X|R1], !.
     
 % Sum = [9,4,6,1,6,2].
 
+% tail recursive reverse'as
 reverse(A, B) :- reverse_worker(A, [], B).
 reverse_worker([], R, R).
 reverse_worker([X|Xs], A, R) :- reverse_worker(Xs, [X|A], R).
@@ -76,10 +83,9 @@ reverse_worker([X|Xs], A, R) :- reverse_worker(Xs, [X|A], R).
 %      [1]
 %      [10,9,9,9,9,1]
 zip_suma([], [], []).
-zip_suma([], [Y|YS], [Z|ZS]) :- Z is Y, zip_suma([], YS, ZS).
-zip_suma([X|XS], [], [Z|ZS]) :- Z is X, zip_suma([], XS, ZS).
+zip_suma([    ], [Y|YS], [Z|ZS]) :- Z is Y, zip_suma([], YS, ZS).
+zip_suma([X|XS], [    ], [Z|ZS]) :- Z is X, zip_suma([], XS, ZS).
 zip_suma([X|XS], [Y|YS], [Z|ZS]) :- Z is X + Y, zip_suma(XS, YS, ZS).
-
 
 % propaguoja `vieną minty` pro visą skaičių atvirkščia tvarka.
 % Carry parametras šiaip visada 0
