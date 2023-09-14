@@ -17,21 +17,10 @@
 %     B is max(H1, H2),
 %     R = [A, B].
 
-sulieti([H | T], [], R) :-
-    R = [H | T].
-
-sulieti([], [H | T], R) :-
-    R = [H | T].
-
-sulieti([H1 | T1], [H2 | T2], R) :-
-    H1 >= H2,
-    sulieti([H1 | T1], T2, R1),
-    R = [H2 | R1].
-
-sulieti([H1 | T1], [H2 | T2], R) :-
-    H2 > H1,
-    sulieti(T1, [H2 | T2], R1),
-    R = [H1 | R1].
+sulieti([X|Xs], [], R) :- R = [X|Xs].
+sulieti([], [X|Xs], R) :- R = [X|Xs].
+sulieti(L, [X|Xs], R) :- H1 >= X, sulieti(L, Xs, R1), R = [X|R1].
+sulieti([X|Xs], L, R) :- H2 >  X, sulieti(Xs, L, R1), R = [X|R1].
 
 % sulieti([], [1,2,3], R).
 % sulieti([1],[2],[2,1]).
@@ -45,10 +34,10 @@ sulieti([H1 | T1], [H2 | T2], R) :-
 % R = [a,b,c,d,[e,f],g].
 
 list_concat([], [X|Xs], [Y|Ys]) :- Y = X, Ys = Xs.
-list_concat([X | Xs], L, [Y | Ys]) :- X = Y, list_concat(Xs, L, Ys).
+list_concat([X|Xs], L, [Y|Ys]) :- X = Y, list_concat(Xs, L, Ys).
 
-apjungti([H], R) :- R = H.
-apjungti([H | T], R) :- apjungti(T, R1), list_concat(H, R1, R).
+apjungti([X], R) :- R = X.
+apjungti([X|Xs], R) :- apjungti(Xs, R1), list_concat(X, R1, R).
 
 % bendri(S1,S2,R) - sąrašas R susideda iš bendrų 
 % duotųjų sąrašų S1 ir S2 elementų. Pavyzdžiui:
@@ -58,14 +47,13 @@ apjungti([H | T], R) :- apjungti(T, R1), list_concat(H, R1, R).
 % R = [b,d].
 
 yra(A, [A|_]).
-yra(A, [H|T]) :- A \= H, yra(A, T), !.
+yra(A, [X|Xs]) :- A \= X, yra(A, Xs).
 
 bendri(A, A, A).
-bendri([], [], []) :- !.
+bendri([], [], []).
 bendri([], [_|_], R) :- R = [].
-
 bendri([X|Xs], L, R) :- not(yra(X, L)), bendri(Xs, L, R1), R = R1, !.
-bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X | R1], !.
+bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X|R1], !.
 
 % bendri([a,b,c,d],[d,b,e],R).
 % bendri([3,2,1],[1,3,16,4],R).
@@ -80,12 +68,25 @@ bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X | R1], !.
 
 reverse(A, B) :- reverse_worker(A, [], B).
 reverse_worker([], R, R).
-reverse_worker([H|T], A, R) :- reverse_worker(T, [H|A], R).
+reverse_worker([X|Xs], A, R) :- reverse_worker(Xs, [X|A], R).
 
+% apsukta suma be `vieno minty` perkėlimo
+
+% pvz: [9,9,9,9,9,1] (zip_suma)
+%      [1]
+%      [10,9,9,9,9,1]
 zip_suma([], [], []).
 zip_suma([], [Y|YS], [Z|ZS]) :- Z is Y, zip_suma([], YS, ZS).
 zip_suma([X|XS], [], [Z|ZS]) :- Z is X, zip_suma([], XS, ZS).
 zip_suma([X|XS], [Y|YS], [Z|ZS]) :- Z is X + Y, zip_suma(XS, YS, ZS).
+
+
+% propaguoja `vieną minty` pro visą skaičių atvirkščia tvarka.
+% Carry parametras šiaip visada 0
+
+% pvz: 
+% apply_carry([10,9,9,9,9,1], X, 0).
+% X = [0,0,0,0,0,2]
 
 apply_carry([X], R, Carry) :- Y is X + Carry, Y < 10, R = [Y].
 
@@ -96,12 +97,12 @@ apply_carry([X], R, Carry) :-
 apply_carry([X|Xs], R, Carry) :- 
     Y is X + Carry, Y < 10,
     apply_carry(Xs, Rr, 0), 
-    R = [Y | Rr].
+    R = [Y|Rr].
 
 apply_carry([X|Xs], R, Carry) :- 
     Y is X + Carry, Y >= 10, 
     apply_carry(Xs, Rr, 1),
-    Z is Y mod 10, R = [Z | Rr].
+    Z is Y mod 10, R = [Z|Rr].
 
 suma(A, B, C) :-
     reverse(A, Ar), reverse(B, Br),
