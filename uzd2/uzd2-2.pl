@@ -13,45 +13,20 @@
 % ?- div(7,-3,Div).
 % Div = -2.
 
+div(A, B, C) :-
+    integer(A),
+    integer(B),
+    B =\= 0,
+    divHelper(A, B, C).
 
-% divnat(a,b,c) ~ a // b == c 
-% (implement without operator `//`)
+divHelper(A, B, C) :-
+    abs(A) < abs(B),
+    C = 0.
 
-% divnat(7,3,2) true
-% divnat(4,3,1) true
-% divnat(1,3,0) true
+divHelper(A, B, C) :-
+    abs(A) >= abs(B),
+    A1 is A - sign(A) * sign(B) * B,
+    divHelper(A1, B, C1),
+    C is C1 + sign(A) * sign(B).
 
-% divnat(-7,3,-2) true
-% divnat(-4,3,-1) true
-% divnat(-1,3,0) true
-
-% divnat(7,-3,-2) true
-% divnat(4,-3,-1) true
-% divnat(1,-3,0) true
-
-% divnat(-7,-3,-2) true
-% divnat(-4,-3,-1) true
-% divnat(-1,-3,0) true
-
-
-
-% sgn(A) sgn(B) sng(C)
-%   +      +
-%   -      +
-%   +      -
-%   -      -
-
-% a * b + q == c
-% a + q/b == c
-% q / b < 1 => q < b
-% 3 * 6 = 18
-
-divnat(A, B, C) :-
-    C is 0,
-    B > A.
-
-% divnat(a,b,c) ~ a // b == c ~ a = c * b + q
-divnat(A, B, C) :-
-    Q is A - C * B,
-    Q >= 0,
-    Q < abs(B).
+% 

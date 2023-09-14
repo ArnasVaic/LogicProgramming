@@ -44,7 +44,7 @@ seserys(Sesuo1, Sesuo2) :-
     Sesuo1 \= Sesuo2.
 
 tevas(Tevas, Vaikas) :-
-    asmuo(Tevas, vyras, _, _),
+    %asmuo(Tevas, vyras, _, _),
     pora(Tevas, Mama),
     mama(Mama, Vaikas).
 
