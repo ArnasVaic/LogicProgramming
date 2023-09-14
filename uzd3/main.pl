@@ -13,12 +13,13 @@
 
 % R = [1,2,4,5,7,11].
 
-sulieti([X|Xs], [    ], R) :- R = [X|Xs].
+sulieti([X|Xs], [    ], R) :- R = [X|Xs], !.
 sulieti([    ], [X|Xs], R) :- R = [X|Xs].
-sulieti([X|Xs], [Y|Ys], R) :- X >= Y, sulieti([X|Xs],   Ys  , R1), R = [Y|R1].
-sulieti([X|Xs], [Y|Ys], R) :- Y >  X, sulieti(   Xs , [Y|Ys], R1), R = [X|R1].
+sulieti([X|Xs], [Y|Ys], R) :- X >= Y, sulieti([X|Xs],   Ys  , R1), !, R = [Y|R1].
+sulieti([X|Xs], [Y|Ys], R) :- Y >  X, sulieti(   Xs , [Y|Ys], R1), !, R = [X|R1].
 
 % Pvz:
+% sulieti([1,2,3], [], R).
 % sulieti([], [1,2,3], R).
 % sulieti([1],[2],[2,1]).
 
@@ -36,11 +37,12 @@ list_concat([    ], [X|Xs], [Y|Ys]) :- Y = X, Ys = Xs.
 list_concat([X|Xs],   L   , [Y|Ys]) :- X = Y, list_concat(Xs, L, Ys).
 
 apjungti([ X  ], R) :- R = X.
-apjungti([X|Xs], R) :- apjungti(Xs, R1), list_concat(X, R1, R).
+apjungti([X|Xs], R) :- apjungti(Xs, R1), !, list_concat(X, R1, R).
 
 % Pvz:
 % apjungti([[a,b],[c],[d,[e,f], g]],R).
-% 
+% apjungti([[3,2],[[],[g,g]],[c],[d,[e,f]]],R).
+% apjungti([[1],[2],[3],[4]],R).
 
 % 3.2
 % bendri(S1,S2,R) - sąrašas R susideda iš bendrų 
@@ -62,7 +64,7 @@ bendri([X|Xs], L, R) :- yra(X, L), bendri(Xs, L, R1), R = [X|R1], !.
 
 % bendri([a,b,c,d],[d,b,e],R).
 % bendri([3,2,1],[1,3,16,4],R).
-% bendri(X,X,X).
+% bendri([3,2,1],[3,2,1],[3,2,1]).
 
 % 4.3
 % suma(S1,S2,Sum) - S1 ir S2 yra skaičiai vaizduojami skaitmenų sąrašais. 
